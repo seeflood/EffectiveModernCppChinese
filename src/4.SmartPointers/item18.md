@@ -94,7 +94,7 @@ makeInvestment(Ts&&... params)
 }
 ```
 
-稍后，我将解释其工作原理，但首先请考虑如果你是调用者，情况如何。假设你存储`makeInvestment`调用结果到`auto`变量中，那么你将在愉快中忽略在删除过程中需要特殊处理的事实。当然，你确实幸福，因为使用了`unique_ptr`意味着你不需要关心什么时候资源应被释放，不需要考虑在资源释放时的路径，以及确保只释放一次，`std::unique_ptr`自动解决了这些问题。从使用者角度，`makeInvestment`接口很棒。
+稍后，我将解释其工作原理，但首先请考虑如果你是调用者，情况如何。假设你存储`makeInvestment`调用结果到`auto`变量中，你可以快乐地使用，而不需要知道你正在使用的资源在删除时需要特殊处理。你很幸福，因为使用std::unique_ptr意味着你不必关心资源应该在何时被销毁，更不必确保在程序的每个路径中销毁只发生一次，`std::unique_ptr`自动解决了这些问题。从使用者角度，`makeInvestment`接口很棒。
 
 这个实现确实相当棒，如果你理解了：
 
@@ -119,7 +119,7 @@ makeInvestment(Ts&&... params)
   };
   ```
 
-在C++14中，函数的返回类型推导存在（参阅[Item3](../1.DeducingTypes/item3.md)），意味着`makeInvestment`可以以更简单，更封装的方式实现：
+在C++14中，函数返回类型推断的存在（参阅[Item3](../1.DeducingTypes/item3.md)）意味着makeInvestment可以以更简单和更封装的方式实现：
 
 ```cpp
 template<typename... Ts>
@@ -176,7 +176,7 @@ makeInvestment(Ts&&... params);                     //加至少一个函数指�
 
 工厂函数不是`std::unique_ptr`的唯一常见用法。作为实现**Pimpl Idiom**（译注：*pointer to implementation*，一种隐藏实际实现而减弱编译依赖性的设计思想，《Effective C++》条款31对此有过叙述）的一种机制，它更为流行。代码并不复杂，但是在某些情况下并不直观，所以这安排在[Item22](../4.SmartPointers/item22.md)的专门主题中。
 
-`std::unique_ptr`有两种形式，一种用于单个对象（`std::unique_ptr<T>`），一种用于数组（`std::unique_ptr<T[]>`）。结果就是，指向哪种形式没有歧义。`std::unique_ptr`的API设计会自动匹配你的用法，比如`operator[]`就是数组对象，解引用操作符（`operator*`和`operator->`）就是单个对象专有。
+`std::unique_ptr`有两种形式，一种用于单个对象（`std::unique_ptr<T>`），一种用于数组（`std::unique_ptr<T[]>`）。因此，`std::unique_ptr`指向的实体类型是很清晰的，不会有任何歧义。`std::unique_ptr`的API设计会自动匹配你的用法，例如，单个对象形式没有索引运算符（`operator[]`），而数组形式则缺少解引用运算符（`operator*`和`operator->`）。
 
 你应该对数组的`std::unique_ptr`的存在兴趣泛泛，因为`std::array`，`std::vector`，`std::string`这些更好用的数据容器应该取代原始数组。`std::unique_ptr<T[]>`有用的唯一情况是你使用类似C的API返回一个指向堆数组的原始指针，而你想接管这个数组的所有权。
 
